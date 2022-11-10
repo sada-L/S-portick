@@ -1,3 +1,6 @@
+
+--1.
+
 select firstname, lastname, bibnumber, countrycode
 from public.runner 
 inner join public."user" on "user".email = runner.email 
@@ -6,6 +9,7 @@ inner join public.registrationevent on registration.registrationid = registratio
 inner join public."event" on "event".eventid = registrationevent.eventid 
 where marathonid = 5
 
+--2.
 
 select firstname, lastname, bibnumber,gender.gender,date_part('year', age(dateofbirth)) as dateofbirth , countryname, eventname
 from public.runner 
@@ -19,7 +23,7 @@ inner join public.marathon on "event".marathonid = marathon.marathonid
 where "event".marathonid < 5
 order by  firstname, lastname;
 
-
+--3.
 
 select gender.gender, marathonname, eventname
 from public.marathon
@@ -39,8 +43,7 @@ inner join public.runner on runner.runnerid=registration.runnerid
 inner join public.gender on gender.genderid=runner.gender
 where gender.gender='Male';
 
-
-
+--4.
 
 select eventname, count(bibnumber) as countrunner, avg(racetime) as avgracetime
 from public.registrationevent
@@ -60,7 +63,7 @@ inner join public.marathon on marathon.marathonid = "event".marathonid
 inner join public.eventtype on "event".eventtypeid = eventtype.eventtypeid 
 where racetime notnull;
 
-
+--5.
 
 select firstname, lastname, "user".email, registrationstatus, marathonname
 from public."user" 
@@ -71,7 +74,7 @@ inner join public."event" on registrationevent.eventid = "event".eventid
 inner join public.marathon on marathon.marathonid = "event".marathonid 
 inner join public.registrationstatus on registrationstatus.registrationstatusid = registration.registrationstatusid 
 
-
+--6.
 
 select charityname, count(sponsorname) as sponsorcount, sum(amount) as sumamount
 from public.sponsorship 
@@ -79,7 +82,7 @@ inner join public.registration on registration.registrationid = sponsorship.regi
 inner join public.charity on charity.charityid = registration.charityid 
 group by charityname;
 
-
+--7.
 
 select distinct  "password" from 
 (select "password" ,regexp_matches("password",'[0-9][A-Z][@|!|#|$|%|^]','c')

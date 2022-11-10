@@ -1,0 +1,92 @@
+select firstname, lastname, bibnumber, countrycode
+from public.runner 
+inner join public."user" on "user".email = runner.email 
+inner join public.registration on runner.runnerid = registration.runnerid 
+inner join public.registrationevent on registration.registrationid = registrationevent.registrationid  
+inner join public."event" on "event".eventid = registrationevent.eventid 
+where marathonid = 5
+
+
+select firstname, lastname, bibnumber,gender.gender,date_part('year', age(dateofbirth)) as dateofbirth , countryname, eventname
+from public.runner 
+inner join public.country on country.countrycode = runner.countrycode 
+inner join public.gender on runner.gender = gender.genderid 
+inner join public."user" on runner.email = "user".email 
+inner join public.registration on runner.runnerid = registration.runnerid 
+inner join public.registrationevent on registration.registrationid = registrationevent.registrationid
+inner join public."event" on registrationevent.eventid = "event".eventid 
+inner join public.marathon on "event".marathonid = marathon.marathonid 
+where "event".marathonid < 5
+order by  firstname, lastname;
+
+
+
+select gender.gender, marathonname, eventname
+from public.marathon
+inner join public."event" on marathon.marathonid="event".marathonid 
+inner join public.registrationevent on registrationevent.eventid="event".eventid 
+inner join public.registration on  registrationevent.registrationid=registration.registrationid 
+inner join public.runner on runner.runnerid=registration.runnerid 
+inner join public.gender on gender.genderid=runner.gender
+where gender.gender='Female';
+
+select gender.gender, marathonname, eventname
+from public.marathon
+inner join public."event" on marathon.marathonid="event".marathonid 
+inner join public.registrationevent on registrationevent.eventid="event".eventid 
+inner join public.registration on  registrationevent.registrationid=registration.registrationid 
+inner join public.runner on runner.runnerid=registration.runnerid 
+inner join public.gender on gender.genderid=runner.gender
+where gender.gender='Male';
+
+
+
+
+select eventname, count(bibnumber) as countrunner, avg(racetime) as avgracetime
+from public.registrationevent
+inner join public."event" on event.eventid=registrationevent.eventid 
+where racetime notnull
+group by eventname;
+
+select firstname, lastname, countryname, to_char((racetime||'second')::interval,'HH24:MI:SS') as racetime,
+date_part('year', age(dateofbirth) - age(startdatetime)) as marathonage, eventtypename,marathonname
+from public.runner
+inner join public."user" on runner.email = "user".email 
+inner join public.country on country.countrycode = runner.countrycode  
+inner join public.registration on registration.runnerid=runner.runnerid 
+inner join public.registrationevent on registrationevent.registrationid = registration.registrationid 
+inner join public."event" on "event".eventid = registrationevent.eventid
+inner join public.marathon on marathon.marathonid = "event".marathonid 
+inner join public.eventtype on "event".eventtypeid = eventtype.eventtypeid 
+where racetime notnull;
+
+
+
+select firstname, lastname, "user".email, registrationstatus, marathonname
+from public."user" 
+inner join public.runner on runner.email = "user".email 
+inner join public.registration on registration.runnerid = runner.runnerid 
+inner join public.registrationevent on registrationevent.registrationid =registration.registrationid 
+inner join public."event" on registrationevent.eventid = "event".eventid 
+inner join public.marathon on marathon.marathonid = "event".marathonid 
+inner join public.registrationstatus on registrationstatus.registrationstatusid = registration.registrationstatusid 
+
+
+
+select charityname, count(sponsorname) as sponsorcount, sum(amount) as sumamount
+from public.sponsorship 
+inner join public.registration on registration.registrationid = sponsorship.registrationid 
+inner join public.charity on charity.charityid = registration.charityid 
+group by charityname;
+
+
+
+select distinct  "password" from 
+(select "password" ,regexp_matches("password",'[0-9][A-Z][@|!|#|$|%|^]','c')
+from "user") as t
+where "password" like '_____%' 
+
+
+ 
+
+
